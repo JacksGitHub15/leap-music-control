@@ -1,0 +1,43 @@
+.menu-item,
+.menu-item--active {
+  height: 60px;
+  width: 100%;
+}
+
+.menu-item {
+  background: orange;
+  align-items: center;
+  color: black;
+  cursor: pointer;
+  display: flex;
+  font-size: 24px;
+  justify-content: center;
+  letter-spacing: 4px;
+  text-align: center;
+}
+
+.menu-item--active {
+  border-radius: 2px !important;
+  box-shadow: 0 0px 50px hsla(0, 0, 0, 0.5);
+  left: 50%;
+  padding: 0 7px;
+  position: absolute;
+  transform: translateX(-50%);
+  transition: all 300ms;
+  z-index: -1;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
