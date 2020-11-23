@@ -10,16 +10,17 @@ import About from '../About';
 import Exit from '../Exit';
 import * as ROUTES from '../../constants/routes.js';
 import './App.css';
-import Menu from '../Menu/Menu.js';
 
 const App = () => (
   <Router>
     <div className="App">
       <Navigation />
-      <Route path={ROUTES.AUDIO_STUDIO} component={AudioStudio} />
-      <Route path={ROUTES.MUSIC_VISUALIZER} component={MusicVisualizer} />
-      <Route path={ROUTES.ABOUT} component={About} />
-      <Route path={ROUTES.EXIT} component={Exit} />
+      <div className="ButtonLayout">
+        <Route path={ROUTES.AUDIO_STUDIO} component={AudioStudio} />
+        <Route path={ROUTES.MUSIC_VISUALIZER} component={MusicVisualizer} />
+        <Route path={ROUTES.ABOUT} component={About} />
+        <Route path={ROUTES.EXIT} component={Exit} />
+      </div>
     </div>
   </Router>
 );
