@@ -30,8 +30,10 @@
 }
 
 #slider {
+    display: inline-block;
+    position: relative;
     margin: 0 0 0 15px;
-    transform: rotate(-90deg);
+    width: 300px;
 }
 
 .footer {
