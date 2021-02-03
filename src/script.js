@@ -25,15 +25,15 @@ function init() {
         var obj = JSON.parse(event.data);
         if (state > 0) {
             if (obj.pointables.length > 0) {
-                var value = obj.pointables[0].tipPosition[0];
-                var intensity = $('#intensity').val();
-                var modified = (350 - value) * intensity;
+                var value = obj.pointables[0].tipPosition[0];   // hand position
+                var intensity = $('#intensity').val();          // intensity of slider
+                var modified = (350 - value) * intensity;       // sound intensity as a result of slider * hand position
                 if (modified <= 0) {
                     modified = 5;
                 }
                 modified = modified.toFixed(2);
 
-                var gainval = (obj.pointables[0].tipPosition[1] - 25) / 600;
+                var gainval = (obj.pointables[0].tipPosition[1] - 25) / 600;  // gain value
                 if (gainval < 0) {
                     gainval = 0;
                 }
@@ -59,6 +59,8 @@ function init() {
         alert("Received error");
     };
 }
+
+
 
 $(function () {
     init();
@@ -94,15 +96,7 @@ $(function () {
 
         $(this).addClass('active');
         $('#play').removeClass('active');
-        $('button.wave').removeClass('active');
-    });
-
-    $('button.wave').click(function () {
-        if (state > 0) {
-            $('button.wave').removeClass('active');
-            $(this).addClass('active');
-            oscillator.type = $(this).val();
-        }
+        // $('button.wave').removeClass('active');
     });
 
 });

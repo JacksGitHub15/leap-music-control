@@ -15,6 +15,12 @@
     grid-area: header;
 }
 
+#sliders {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+
 .left-col {
     grid-area: left;
 }
