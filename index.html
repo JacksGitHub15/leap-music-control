@@ -1,141 +1,152 @@
 <html>
+
 <head>
-	<title>Leap Music Control</title>
-	<link rel="stylesheet" type="text/css" href="./styles/app.css">
+    <title>Leap Music Control</title>
+    <link rel="stylesheet" type="text/css" href="./styles/app.css">
 </head>
+
 <body>
 
-<div id="notification-area"></div>
+    <div id="status-bar"></div>
 
+    <div id="content" class="disconnected">
+        <header id="slider-controls" class="clearfix">
+            <div class="control-category">
+                <div class="category-title">Audio</div>
+                <div class="slider-group clearfix">
+                    <div class="slider">
+                        <input type="range" orient="vertical" min="0" max="1" step="0.01" value="1" id="audio-volume" />
+                        <div class="slider-label">Volume</div>
+                    </div>
+                </div>
+            </div>
+            <div class="control-category">
+                <div class="category-title">Delay</div>
+                <div class="slider-group clearfix">
+                    <div class="slider">
+                        <input type="range" orient="vertical" min="0" max="0.8" step="0.01" value="0"
+                            id="delay-feedback" />
+                        <div class="slider-label">Feedback</div>
+                    </div>
+                    <div class="slider">
+                        <input type="range" orient="vertical" min="0" max="0.9" step="0.01" value="0" id="delay-time" />
+                        <div class="slider-label">Time</div>
+                    </div>
+                </div>
+            </div>
+            <div class="control-category">
+                <div class="category-title">Flanger</div>
+                <div class="slider-group clearfix">
+                    <div class="slider">
+                        <input type="range" orient="vertical" min="0" max="1" step="0.01" value="0"
+                            id="flanger-speed" />
+                        <div class="slider-label">Speed</div>
+                    </div>
+                    <div class="slider">
+                        <input type="range" orient="vertical" min="0" max="1" step="0.01" value="0"
+                            id="flanger-depth" />
+                        <div class="slider-label">Depth</div>
+                    </div>
+                    <div class="slider">
+                        <input type="range" orient="vertical" min="0" max="1" step="0.01" value="0"
+                            id="flanger-feedback" />
+                        <div class="slider-label">Feedback</div>
+                    </div>
+                </div>
+            </div>
+            <div class="control-category">
+                <div class="category-title">Low-pass filter</div>
+                <div class="slider-group clearfix">
+                    <div class="slider">
+                        <input type="range" orient="vertical" min="50" max="22050" step="1" value="22050"
+                            id="low-pass-filter-frequency" />
+                        <div class="slider-label">Frequency</div>
+                    </div>
+                </div>
+            </div>
+            <div class="control-category">
+                <div class="category-title">Distortion</div>
+                <div class="slider-group clearfix">
+                    <div class="slider">
+                        <input type="range" orient="vertical" min="0.0" max="0.5" step="0.01" value="0.0"
+                            id="distortion-gain" />
+                        <div class="slider-label">Gain</div>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-<div id="content" class="disconnected">
-	<header id="slider-controls" class="clearfix">
-		<div class="control-category">
-			<div class="category-title">Audio</div>
-			<div class="slider-group clearfix">
-                <div class="slider">
-                    <input type="range" orient="vertical" min="0" max="1" step="0.01" value="1" id="audio-volume" />
-                    <div class="slider-label">Volume</div>
-                    <div class="slider-checkbox">
-                    	<input type="checkbox" id="audio-volume-checkbox">
-                    	<label for="audio-volume-checkbox" class="checkbox-label">
-                    </div>
-                </div>
-            </div>
-		</div>
-		<div class="control-category">
-			<div class="category-title">Delay</div>
-			<div class="slider-group clearfix">
-                <div class="slider">
-                    <input type="range" orient="vertical" min="0" max="0.8" step="0.01" value="0" id="delay-feedback" />
-                    <div class="slider-label">Feedback</div>
-                    <div class="slider-checkbox">
-                    	<input type="checkbox" id="delay-feedback-checkbox">
-                    	<label for="delay-feedback-checkbox" class="checkbox-label">
-                    </div>
-                </div>
-                <div class="slider">
-                    <input type="range" orient="vertical" min="0" max="0.9" step="0.01" value="0" id="delay-time" />
-                    <div class="slider-label">Time</div>
-                    <div class="slider-checkbox">
-                    	<input type="checkbox" id="delay-time-checkbox">
-                    	<label for="delay-time-checkbox" class="checkbox-label">
-                    </div>
-                </div>
-            </div>
-		</div>
-		<div class="control-category">
-			<div class="category-title">Flanger</div>
-			<div class="slider-group clearfix">
-                <div class="slider">
-                    <input type="range" orient="vertical" min="0" max="1" step="0.01" value="0" id="flanger-speed" />
-                    <div class="slider-label">Speed</div>
-                    <div class="slider-checkbox">
-                    	<input type="checkbox" id="flanger-speed-checkbox">
-                    	<label for="flanger-speed-checkbox" class="checkbox-label">
-                    </div>
-                </div>
-                <div class="slider">
-                    <input type="range" orient="vertical" min="0" max="1" step="0.01" value="0" id="flanger-depth" />
-                    <div class="slider-label">Depth</div>
-                    <div class="slider-checkbox">
-                    	<input type="checkbox" id="flanger-depth-checkbox">
-                    	<label for="flanger-depth-checkbox" class="checkbox-label">
-                    </div>
-                </div>
-                <div class="slider">
-                    <input type="range" orient="vertical" min="0" max="1" step="0.01" value="0" id="flanger-feedback" />
-                    <div class="slider-label">Feedback</div>
-                    <div class="slider-checkbox">
-                        <input type="checkbox" id="flanger-feedback-checkbox">
-                        <label for="flanger-feedback-checkbox" class="checkbox-label">
-                    </div>
-                </div>
-            </div>
-		</div>
-		<div class="control-category">
-			<div class="category-title">Low-pass filter</div>
-			<div class="slider-group clearfix">
-                <div class="slider">
-                    <input type="range" orient="vertical" min="50" max="22050" step="1" value="22050" id="low-pass-filter-frequency" />
-                    <div class="slider-label">Frequency</div>
-                    <div class="slider-checkbox">
-                    	<input type="checkbox" id="filter-frequency-checkbox">
-                    	<label for="filter-frequency-checkbox" class="checkbox-label">
-                    </div>
-                </div>
-            </div>
-		</div>
-		<div class="control-category">
-			<div class="category-title">Distortion</div>
-			<div class="slider-group clearfix">
-                <div class="slider">
-                    <input type="range" orient="vertical" min="0.0" max="0.5" step="0.01" value="0.0" id="distortion-gain" />
-                    <div class="slider-label">Gain</div>
-                    <div class="slider-checkbox">
-                    	<input type="checkbox" id="distortion-gain-checkbox">
-                    	<label for="distortion-gain-checkbox" class="checkbox-label">
-                    </div>
-                </div>
-            </div>
-		</div>
-    </header>
-    
-    <main>
-        <canvas id="audio-visualisation"></canvas>
-    </main>
+        <main>
+            <canvas id="audio-visualisation"></canvas>
+        </main>
 
-    <aside class="left-col">
-        <div id="instructions">Select desired parameters and control them with the leap motion!</div>
-    </aside>
+        <aside class="left-col">
+            <div id="instructions">Select desired parameters and control them with the leap motion!</div>
+            <p>
+                Choose visualisation type
+                <input type="checkbox"> TYPE 1
+                <input type="checkbox"> TYPE 2
+            </p>
+            <div class="slider-checkbox">
+                <div>
+                    <input type="checkbox" id="audio-volume-checkbox"> Audio
+                    <label for="audio-volume-checkbox" class="checkbox-label"></label>
+                </div>
+                <div>
+                    <input type="checkbox" id="delay-feedback-checkbox"> Delay: Feedback
+                    <label for="delay-feedback-checkbox" class="checkbox-label"></label>
+                </div>
+                <div>
+                    <input type="checkbox" id="delay-time-checkbox"> Delay: Time
+                    <label for="delay-time-checkbox" class="checkbox-label">
+                </div>
+                <div>
+                    <input type="checkbox" id="flanger-speed-checkbox"> Flanger: Speed
+                    <label for="flanger-speed-checkbox" class="checkbox-label">
+                </div>
+                <div>
+                    <input type="checkbox" id="flanger-depth-checkbox"> Flanger: Depth
+                    <label for="flanger-depth-checkbox" class="checkbox-label">
+                </div>
+                <div>
+                    <input type="checkbox" id="flanger-feedback-checkbox"> Flanger: Feedback
+                    <label for="flanger-feedback-checkbox" class="checkbox-label">
+                </div>
+                <div>
+                    <input type="checkbox" id="filter-frequency-checkbox"> Filter: Frequency
+                    <label for="filter-frequency-checkbox" class="checkbox-label">
+                </div>
+                <div>
+                    <input type="checkbox" id="distortion-gain-checkbox"> Distortion: Gain
+                    <label for="distortion-gain-checkbox" class="checkbox-label">
+                </div>
+            </div>
+        </aside>
 
-    <aside class="right-col">
-        PLACEHOLDER 2
-    </aside>
-    
-    <div id="controls" class="bottom">
-        <button id="play-control" class="active"><i class="icon-play"></i></button>
-        <button id="pause-control"><i class="icon-pause"></i></button>
+        <aside class="right-col">
+            Playback:
+        </aside>
+
+        <div id="controls" class="bottom">
+            <button id="play-control" class="active"><i class="play-button">Play</i></button>
+            <button id="pause-control"><i class="pause-button">Pause</i></button>
+        </div>
     </div>
-</div>
 
-<footer>
-    FOOTER
-</footer>
-
-<script src="./scripts/leap.js"></script>
-<script src="https://s3-us-west-1.amazonaws.com/dolbydeveloper/1.1.0/js/dolby.min.js"></script>
-<script src="./scripts/Pizzicato.js"></script>
-<script src="./scripts/app.js"></script>
-<script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-25705162-1']);
-    _gaq.push(['_trackPageview']);
-    (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-</script>
+    <script src="./scripts/leap.js"></script>
+    <script src="https://s3-us-west-1.amazonaws.com/dolbydeveloper/1.1.0/js/dolby.min.js"></script>
+    <script src="./scripts/Pizzicato.js"></script>
+    <script src="./scripts/app.js"></script>
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-25705162-1']);
+        _gaq.push(['_trackPageview']);
+        (function () {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
 </body>
+
 </html>

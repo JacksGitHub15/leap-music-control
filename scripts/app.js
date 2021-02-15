@@ -1,13 +1,13 @@
 /* jshint undef: true, unused: true, eqeqeq: true*/
 /* globals Pizzicato, Leap, Dolby, window */
 
-(function() {
+(function () {
 	'use strict';
 
 	// DOM elements used throughout the script
 	var playButton = window.document.getElementById('play-control');
 	var pauseButton = window.document.getElementById('pause-control');
-	var notificationArea = window.document.getElementById('notification-area');
+	var notificationArea = window.document.getElementById('status-bar');
 	var content = window.document.getElementById('content');
 	var instructions = window.document.getElementById('instructions');
 
@@ -48,17 +48,17 @@
 
 		drums = new Pizzicato.Sound({
 			source: 'file',
-	    	options: { path: drumsPath, loop: true }
+			options: { path: drumsPath, loop: true }
 		}, onSoundLoaded);
 
 		guitars = new Pizzicato.Sound({
 			source: 'file',
-	    	options: { path: guitarsPath, loop: true }
+			options: { path: guitarsPath, loop: true }
 		}, onSoundLoaded);
 
 		bass = new Pizzicato.Sound({
 			source: 'file',
-	    	options: { path: bassPath, loop: true }
+			options: { path: bassPath, loop: true }
 		}, onSoundLoaded);
 
 		songTracks = [drums, guitars, bass];
@@ -87,7 +87,7 @@
 		notificationArea.innerText = 'Loading audio files';
 	}
 
-	function removeWaitingScreen () {
+	function removeWaitingScreen() {
 		notificationArea.innerText = '';
 	}
 
@@ -101,12 +101,12 @@
 	 * drawing the waveform.
 	 **/
 	function setupSoundsAndEffects() {
-		playButton.addEventListener('click', function() {
+		playButton.addEventListener('click', function () {
 			playSong();
 			drawWaveform();
 		});
 
-		pauseButton.addEventListener('click', function() {
+		pauseButton.addEventListener('click', function () {
 			pauseSong();
 			canvasContext.clearRect(0, 0, canvas.width, canvas.height);
 		});
@@ -136,7 +136,7 @@
 	 * Plays all tracks at the same time
 	 **/
 	function playSong() {
-		for (var i = 0; i < songTracks.length; i++) 
+		for (var i = 0; i < songTracks.length; i++)
 			songTracks[i].play();
 	}
 
@@ -144,7 +144,7 @@
 	 * Pauses all tracks at the same time
 	 **/
 	function pauseSong() {
-		for (var i = 0; i < songTracks.length; i++) 
+		for (var i = 0; i < songTracks.length; i++)
 			songTracks[i].pause();
 	}
 
@@ -168,15 +168,15 @@
 		};
 
 		for (var key in slidersValues) {
-			
+
 			var slider = window.document.getElementById(key);
 
 			for (var i = 0; i < slidersValues[key].length; i++) {
 				var bindInfo = slidersValues[key][i];
 				var element = bindInfo.element;
 				var parameter = bindInfo.parameter;
-				(function(slider, element, parameter) {
-					slider.addEventListener('input', function(e) {
+				(function (slider, element, parameter) {
+					slider.addEventListener('input', function (e) {
 						element[parameter] = e.target.valueAsNumber;
 					});
 				})(slider, element, parameter);
@@ -185,15 +185,15 @@
 	}
 
 	/*
-	 * Draws the graphical interpretation of the traks from the
+	 * Draws the graphical interpretation of the tracks from the
 	 * info obtained by the analyser node.
-	 **/	
+	 **/
 	function drawWaveform() {
 		if (!songTracks[0].playing)
 			return;
 
 		window.requestAnimationFrame(drawWaveform);
-		
+
 		drawFrequencyData();
 		drawTimeDomainData();
 	}
@@ -203,7 +203,7 @@
 	 **/
 	function drawFrequencyData() {
 		analyser.getByteFrequencyData(waveformData);
-	
+
 		canvasContext.fillStyle = '#1B1B1B';
 		canvasContext.fillRect(0, 0, canvas.width, canvas.height);
 		canvasContext.fillStyle = '#333';
@@ -211,7 +211,7 @@
 		var sliceWidth = canvas.width / analyser.frequencyBinCount * 6;
 		var x = 0;
 
-		for(var i = 0; i < analyser.frequencyBinCount; i++) {
+		for (var i = 0; i < analyser.frequencyBinCount; i++) {
 			if (i % 6) continue;
 			canvasContext.fillRect(x, canvas.height - waveformData[i] * 2.5, sliceWidth, waveformData[i] * 2.5);
 			x += sliceWidth + 1;
@@ -234,7 +234,7 @@
 		var previousX;
 		var previousY;
 
-		for(var i = 0; i < analyser.frequencyBinCount; i++) {
+		for (var i = 0; i < analyser.frequencyBinCount; i++) {
 			if (i % 24) continue;
 
 			var v = waveformData[i] / 128.0;
@@ -243,10 +243,10 @@
 
 			if (i === 0) {
 				canvasContext.moveTo(x, y);
-			} else  {
+			} else {
 				var xc = (previousX + x) / 2;
-	      		var yc = (previousY + y) / 2;
-	      	
+				var yc = (previousY + y) / 2;
+
 				canvasContext.quadraticCurveTo(previousX, previousY, xc, yc);
 			}
 
