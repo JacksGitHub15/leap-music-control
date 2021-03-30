@@ -1,23 +1,99 @@
+/*
+  Reference:
+  Matt Tytel, lissa, (2013), GitHub repository, https://github.com/mtytel/lissa
+  This was used for inspiration and guidance
+ */
+
 lissa.controls = {};
 
-lissa.controls.knob = function($container, f, settings) {
+function onlyOne(checkbox) {
+  var checkboxes = document.getElementsByName('check')
+  checkboxes.forEach((item) => {
+    if (item !== checkbox) item.checked = false
+    window.location.reload();
+  })
+}
+
+lissa.controls.knob = function ($container, f, settings) {
   var $knob = null;
 
   function render() {
-    // TODO should empty and re-fill the container
-    // because render can be called more than once
-    // to do this, make each knob have a container just for itself
-    // so that the order of making knobs doesn't matter
     $container.append(lissa.templates.templates.knob(settings));
-    $knob = $container.find('#'+settings.id).first();
-    $knob.knob({change: f});
-    $knob.on('change', function(ev) {
+    $knob = $container.find('#' + settings.id).first();
+    $knob.knob({ change: f });
+    $knob.on('change', function (ev) {
+      f($knob.val());
+    });
+  }
+
+  function getVal() {   // only called by setFreq
+    return $knob.val();
+  }
+
+  function setVal(val) {  // set values of all knobs
+    $knob.val(val).trigger('change');
+    f(val);
+  }
+
+  return {
+    render: render,
+    getVal: getVal,
+    setVal: setVal,
+  };
+};
+
+
+lissa.controls.knobLeapMotion = function ($container, f, settings) {
+  var $knob = null;
+  activateLeapMotion();
+  function activateLeapMotion() {
+    setupLeapMotion();
+    /*
+       * Sets up the leap motion controller by binding to events 
+       * and starting the loop with the captured data.
+       **/
+    function setupLeapMotion() {
+      var leapController = new Leap.Controller();
+      leapController.connect();
+
+      Leap.loop(onLeapCapturedData);
+    }
+
+    function onLeapCapturedData(leapData) {
+
+      if (!leapData.hands || leapData.hands.length === 0)
+        return;
+
+      var verticalPosition = leapData.hands[0].palmPosition[1];
+      var percentage = Math.max(Math.min(((verticalPosition - 50) / 350), 1), 0);
+
+      var valueLeapMotion;
+      valueLeapMotion = $knob.val() * percentage;
+      valueLeapMotion = Math.round(valueLeapMotion);
+      console.log("valueLeapMotion " + valueLeapMotion);
+
+      var event = new window.Event('input');
+      knob.dispatchEvent(event);
+
+      return valueLeapMotion;
+    }
+  }
+
+  var $knob = null;
+
+  function render() {
+    $container.append(lissa.templates.templates.knob(settings));
+    $knob = $container.find('#' + settings.id).first();
+    $knob.knob({ change: f });
+
+    $knob.on('change', function (ev) {
       f($knob.val());
     });
   }
 
   function getVal() {
-    return parseInt($knob.val());
+    console.log("$knob.val() " + $knob.val());
+    return $knob.val();
   }
 
   function setVal(val) {
@@ -32,40 +108,41 @@ lissa.controls.knob = function($container, f, settings) {
   };
 };
 
-lissa.controls.oscillator = function($container, title, model, base_freq_knob) {
+
+lissa.controls.oscillator = function ($container, title, model, base_freq_knob) {
   // model is a lissa.oscillator()
 
   var id_prefix = $container.attr('id');
 
-  var freq_num_knob = null;
-  var freq_den_knob = null;
-  var freq_milli_knob = null;
+  var freq_mul_knob = null;
+  var freq_divi_knob = null;
+  var freq_detu_knob = null;
   var phase_knob = null;
   var sin_knob = null;
   var tri_knob = null;
 
-  var freq_num_knob_settings = {
+  var freq_mul_knob_settings = {
     label: 'MULTIPLY',
     min_val: 1,
     max_val: 12,
     default_val: 1,
-    id: get_id('num-knob'),
+    id: get_id('mul-knob'),
   };
 
-  var freq_den_knob_settings = {
+  var freq_divi_knob_settings = {
     label: 'DIVIDE',
     min_val: 1,
     max_val: 12,
     default_val: 1,
-    id: get_id('den-knob'),
+    id: get_id('divi-knob'),
   };
 
-  var freq_milli_knob_settings = {
+  var freq_detu_knob_settings = {
     label: 'DETUNE',
     min_val: -100,
     max_val: 100,
     default_val: 0,
-    id: get_id('milli-knob'),
+    id: get_id('detu-knob'),
   };
 
   var phase_knob_settings = {
@@ -94,9 +171,16 @@ lissa.controls.oscillator = function($container, title, model, base_freq_knob) {
 
   function setFreq() {
     // setTimeout makes sure all knobs have updated before reading their value
-    setTimeout(function() {
-      var freq = base_freq_knob.getVal() * (1.0 * freq_num_knob.getVal() / freq_den_knob.getVal()) * Math.pow(2, freq_milli_knob.getVal() / 12000.0);
+    setTimeout(function () {
+      var freq = base_freq_knob.getVal() * (1.0 * freq_mul_knob.getVal() / freq_divi_knob.getVal()) * Math.pow(2, freq_detu_knob.getVal() / 12000.0);
       model.setFreq(freq);
+    }, 0);
+  }
+
+  function setLeapMotionFreq() {
+    setTimeout(function () {
+      var freq = base_freq_knob.getVal() * (1.0 * freq_mul_knob.getVal() / freq_divi_knob.getVal()) * Math.pow(2, freq_detu_knob.getVal() / 12000.0);
+      model.setLeapMotionFreq(freq);
     }, 0);
   }
 
@@ -106,49 +190,91 @@ lissa.controls.oscillator = function($container, title, model, base_freq_knob) {
   }
 
   function render() {
-    var $el = lissa.templates.templates.oscillator({title: title});
+    var $el = lissa.templates.templates.oscillator({ title: title });
     $container.append($el);
 
     var $col1 = $container.find('.knob-column.col-1').first();
     var $col2 = $container.find('.knob-column.col-2').first();
     var $col3 = $container.find('.knob-column.col-3').first();
 
-    freq_num_knob = lissa.controls.knob($col1, setFreq, freq_num_knob_settings);
-    freq_num_knob.render();
+    if (mul_checkbox.checked) {
+      freq_mul_knob = lissa.controls.knobLeapMotion($col1, setFreq, freq_mul_knob_settings);
+      freq_mul_knob.render();
+    }
+    else {
+      freq_mul_knob = lissa.controls.knob($col1, setFreq, freq_mul_knob_settings);
+      freq_mul_knob.render();
+    }
 
-    freq_den_knob = lissa.controls.knob($col1, setFreq, freq_den_knob_settings);
-    freq_den_knob.render();
+    if (divi_checkbox.checked) {
+      freq_divi_knob = lissa.controls.knobLeapMotion($col1, setFreq, freq_divi_knob_settings);
+      freq_divi_knob.render();
+    }
+    else {
+      freq_divi_knob = lissa.controls.knob($col1, setFreq, freq_divi_knob_settings);
+      freq_divi_knob.render();
+    }
 
-    freq_milli_knob = lissa.controls.knob($col2, setFreq, freq_milli_knob_settings);
-    freq_milli_knob.render();
+    if (detu_checkbox.checked) {
+      freq_detu_knob = lissa.controls.knobLeapMotion($col2, setFreq, freq_detu_knob_settings);
+      freq_detu_knob.render();
+    }
+    else {
+      freq_detu_knob = lissa.controls.knob($col2, setFreq, freq_detu_knob_settings);
+      freq_detu_knob.render();
+    }
 
-    phase_knob = lissa.controls.knob($col2,
-      function(val) {
-        model.setPhase(val / 360);
-      }, 
-      phase_knob_settings);
-    phase_knob.render();
+    if (phase_checkbox.checked) {
+      phase_knob = lissa.controls.knobLeapMotion($col2,
+        function (val) {
+          model.setPhase(val / 360);
+        },
+        phase_knob_settings);
+      phase_knob.render();
+    }
+    else {
+      phase_knob = lissa.controls.knob($col2,
+        function (val) {
+          model.setPhase(val / 360);
+        },
+        phase_knob_settings);
+      phase_knob.render();
+    }
 
     function wave_amp_setter(type, max) {
-      return function(val) {
+      return function (val) {
         model.setAmp(type, val / max);
       };
     }
 
-    sin_knob = lissa.controls.knob($col3,
+    if (sin_checkbox.checked) {
+      sin_knob = lissa.controls.knobLeapMotion($col3,
         wave_amp_setter('sin', sin_knob_settings.max_val), sin_knob_settings);
-    sin_knob.render();
+      sin_knob.render();
+    }
+    else {
+      sin_knob = lissa.controls.knob($col3,
+        wave_amp_setter('sin', sin_knob_settings.max_val), sin_knob_settings);
+      sin_knob.render();
+    }
 
-    tri_knob = lissa.controls.knob($col3,
+    if (tri_checkbox.checked) {
+      tri_knob = lissa.controls.knobLeapMotion($col3,
         wave_amp_setter('tri', tri_knob_settings.max_val), tri_knob_settings);
-    tri_knob.render();
+      tri_knob.render();
+    }
+    else {
+      tri_knob = lissa.controls.knob($col3,
+        wave_amp_setter('tri', tri_knob_settings.max_val), tri_knob_settings);
+      tri_knob.render();
+    }
   }
 
   function randomize() {
-    freq_num_knob.setVal(lissa.utils.random_int(1,5));
-    freq_den_knob.setVal(lissa.utils.random_int(1,5));
-    freq_milli_knob.setVal(lissa.utils.random_int(-7,7));
-    var sin_amount = lissa.utils.random_int(0,100);
+    freq_mul_knob.setVal(lissa.utils.random_int(1, 5));
+    freq_divi_knob.setVal(lissa.utils.random_int(1, 5));
+    freq_detu_knob.setVal(lissa.utils.random_int(-7, 7));
+    var sin_amount = lissa.utils.random_int(0, 100);
     sin_knob.setVal(sin_amount);
     if (lissa.harmonograph_type === 'lateral')
       tri_knob.setVal(100 - sin_amount);
@@ -163,13 +289,13 @@ lissa.controls.oscillator = function($container, title, model, base_freq_knob) {
   };
 };
 
-lissa.controls.minicolors = function($container) {
+lissa.controls.minicolors = function ($container) {
   function init() {
-    $container.each(function() {
+    $container.each(function () {
       $(this).minicolors({
         animationSpeed: 0,
         textfield: !$(this).hasClass('no-textfield'),
-        change: function(hex, opacity) {
+        change: function (hex, opacity) {
           var red = parseInt(hex.substring(1, 3), 16);
           var green = parseInt(hex.substring(3, 5), 16);
           var blue = parseInt(hex.substring(5, 7), 16);
@@ -189,8 +315,8 @@ lissa.controls.minicolors = function($container) {
     var green_hex = '0' + green.toString(16);
     var blue_hex = '0' + blue.toString(16);
     $container.minicolors('value', '#' + red_hex.substring(red_hex.length - 2)
-                                + green_hex.substring(green_hex.length - 2)
-                                + blue_hex.substring(blue_hex.length - 2));
+      + green_hex.substring(green_hex.length - 2)
+      + blue_hex.substring(blue_hex.length - 2));
   }
 
   return {
@@ -199,24 +325,16 @@ lissa.controls.minicolors = function($container) {
   };
 };
 
-lissa.controls.randomizer = function($container, items) {
-  var $randomize_button = $container.find('.randomize').first();
-  var $play_button = $container.find('.play').first();
-  var $controls_button = $container.find('.controls-toggle').first();
-  var controls_shown = false;
-  var playing_id = 0;
 
-  if (!controls_shown)
-    $('.knobs').hide();
+lissa.controls.randomizer = function ($container, items) {
+  var $randomize_button = $container.find('.randomize').first();
 
   function init() {
     $randomize_button.on('click', randomize);
-    $play_button.on('click', togglePlaying);
-    $controls_button.on('click', toggleControls);
   }
 
   function randomize() {
-    _.each(items, function(item) {
+    _.each(items, function (item) {
       item.randomize();
     });
   }
@@ -227,43 +345,19 @@ lissa.controls.randomizer = function($container, items) {
     }
   }
 
-  function toggleControls() {
-    controls_shown = !controls_shown;
-    if (controls_shown) {
-      $('.knobs').fadeTo(500, 0.75);
-      $controls_button.text('Hide');
-    }
-    else {
-      $('.knobs').fadeOut(500);
-      $controls_button.text('Controls');
-    }
-  }
-
-  function togglePlaying() {
-    if (playing_id) {
-      $play_button.text('Play Song!');
-      clearInterval(playing_id);
-      playing_id = 0;
-    }
-    else {
-      randomize();
-      playing_id = setInterval(maybeRandomize, 300);
-      $play_button.text('Stop Song.');
-    }
-  }
-
   return {
     init: init,
   };
 };
 
-lissa.controls.harmonograph_type = function($container, model) {
+
+lissa.controls.harmonograph_type = function ($container, model) {
   var $buttons = $container.find('.harmonograph-type .simple-button');
 
   model.harmonograph_type = null;
 
   function init() {
-    $buttons.on('click', function(ev) {
+    $buttons.on('click', function (ev) {
       var $this = $(this);
       choose($this);
     });
@@ -295,7 +389,8 @@ lissa.controls.harmonograph_type = function($container, model) {
   };
 };
 
-lissa.controls.init = function($container) {
+
+lissa.controls.init = function ($container) {
   var base_freq_knob_settings = {
     label: 'BASE FREQUENCY',
     min_val: 1,
@@ -303,9 +398,10 @@ lissa.controls.init = function($container) {
     default_val: 200,
     id: 'base-freq-knob'
   };
+
   var base_freq_knob = lissa.controls.knob(
     $container.find('#base_freq').first(),
-    function(val) {
+    function (val) {
       left_oscillator_control.setFreq();
       right_oscillator_control.setFreq();
     },
@@ -315,7 +411,7 @@ lissa.controls.init = function($container) {
 
   var left_oscillator_control = lissa.controls.oscillator(
     $container.find('#left-oscillator').first(),
-    'Left Oscillator - X',
+    'X-axis Oscillator',
     lissa.synth.left,
     base_freq_knob
   );
@@ -323,14 +419,12 @@ lissa.controls.init = function($container) {
 
   var right_oscillator_control = lissa.controls.oscillator(
     $container.find('#right-oscillator').first(),
-    'Right Oscillator - Y',
+    'Y-axis Oscillator',
     lissa.synth.right,
     base_freq_knob
   );
   right_oscillator_control.render();
 
-  //TODO make minicolors scoped within the container somehow
-  //or take its location as an input
   var minicolors = lissa.controls.minicolors($('.minicolors'));
   minicolors.init();
 
@@ -341,16 +435,12 @@ lissa.controls.init = function($container) {
   randomizer.init();
 };
 
-lissa.templates = function() {
-  // http://underscorejs.org/#template
-  // The skinny: Templates are super helpful for dynamically creating HTML
-  // that gets used multiple times, but with a few parameters changed.
-  // Underscore templates are sweet because you can pass in an arbitrary
-  // JavaScript object and execute JavaScript code inside the template.
+
+lissa.templates = function () {
   function init() {
     // a wrapper around _.template to give error messages
     var that = this;
-    $('script[type="underscore/template"]').each(function() {
+    $('script[type="underscore/template"]').each(function () {
       var template = null;
       var $this = $(this);
       var id = $(this).attr('id');
@@ -362,7 +452,7 @@ lissa.templates = function() {
         console.log('Error compiling template', id, error);
       }
 
-      that.templates[id] = function() {
+      that.templates[id] = function () {
         try {
           return template.apply(this, arguments);
         }
@@ -376,4 +466,5 @@ lissa.templates = function() {
     templates: {},
     init: init,
   };
+
 }();

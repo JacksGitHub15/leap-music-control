@@ -1,10 +1,16 @@
+/*
+  Reference:
+  Matt Tytel, lissa, (2013), GitHub repository, https://github.com/mtytel/lissa
+  This was used for inspiration and guidance
+ */
+
 var lissa = {};
 
 lissa.harmonograph_type = null; // 'rotary' or 'lateral'
 
 lissa.constants = {};
 
-lissa.smoothValue = function(x, decay_rate) {
+lissa.smoothValue = function (x, decay_rate) {
   var DEFAULT_DECAY = 0.99;
 
   var decay_rate_ = decay_rate || DEFAULT_DECAY;
@@ -31,11 +37,11 @@ lissa.smoothValue = function(x, decay_rate) {
   };
 }
 
-lissa.waveforms = function() {
+lissa.waveforms = function () {
   var SIN_RESOLUTION = 1024;
   var SIN_LOOKUP = [];
   for (var i = 0; i < SIN_RESOLUTION + 1; i++) {
-    SIN_LOOKUP.push(Math.sin(2 * Math.PI * i / SIN_RESOLUTION));
+    SIN_LOOKUP.push(Math.sin(2 * Math.PI * i / SIN_RESOLUTION));  // SIN WAVE
   }
 
   function saw(t) {
@@ -71,7 +77,7 @@ lissa.waveforms = function() {
   };
 }();
 
-lissa.oscillator = function() {
+lissa.oscillator = function () {
   var AMP_DECAY = 0.99997;
   var FREQ_DECAY = 0.997;
   var PHASE_DECAY = 0.9997;
@@ -91,10 +97,10 @@ lissa.oscillator = function() {
 
     var val1 = 0.0;
     var val2 = 0.0;
-    _.each(amps_, function(amp, type) {
+    _.each(amps_, function (amp, type) {
       val1 += amp.tick() * lissa.waveforms[type](current_phase_ + phase_offset);
       val2 += amp.tick() *
-              lissa.waveforms[type](current_phase_ + phase_offset + 0.25);
+        lissa.waveforms[type](current_phase_ + phase_offset + 0.25);
     });
 
     return [val1, val2];
@@ -133,7 +139,7 @@ lissa.oscillator = function() {
 }
 
 
-lissa.synth = function() {
+lissa.synth = function () {
   var DEFAULT_FREQ = 200.0;
 
   function init(buffer_size) {
@@ -184,7 +190,7 @@ lissa.synth = function() {
   };
 }();
 
-lissa.figure = function() {
+lissa.figure = function () {
   var BUFFER_MAX = 4096;
   var BORDER = 10;
   var COLOR_DECAY = 0.92;
@@ -223,23 +229,29 @@ lissa.figure = function() {
     blue = Math.floor(blue_.tick());
     figure_context_.fillStyle = 'rgb(' + red + ',' + green + ',' + blue + ')';
 
-    // Draw it for Mr. Lissajous.
-    if (lissa.harmonograph_type === 'lateral') {
-      for (var i = 1; i < points.length; i++) {
-        var x = canvas_width_ / 2 + points[i][0][0] * (drawing_width / 2 - BORDER);
-        var y = canvas_height_ / 2 - points[i][1][0] * (drawing_width / 2 - BORDER);
-        figure_context_.fillRect(x, y, 1, 5);
-      }
-    } else { // 'rotary' or 'rotaryinv'
-      var sign = lissa.harmonograph_type === 'rotary' ? 1 : -1;
-      for (var i = 1; i < points.length; i++) {
-        var osc_x = (points[i][0][0] + points[i][1][0]) * 0.5;
-        var osc_y = (points[i][0][1] + sign * points[i][1][1]) * 0.5;
-        var x = canvas_width_ / 2 + osc_x * (drawing_width / 2 - BORDER);
-        var y = canvas_height_ / 2 - osc_y * (drawing_width / 2 - BORDER);
-        figure_context_.fillRect(x, y, 1, 5);
-      }
+    for (var i = 1; i < points.length; i++) {
+      var x = canvas_width_ / 2 + points[i][0][0] * (drawing_width / 2 - BORDER);
+      var y = canvas_height_ / 2 - points[i][1][0] * (drawing_width / 2 - BORDER);
+      figure_context_.fillRect(x, y, 1, 5);
     }
+
+    // Draw it for Mr. Lissajous.
+    // if (lissa.harmonograph_type === 'lateral') {
+    //   for (var i = 1; i < points.length; i++) {
+    //     var x = canvas_width_ / 2 + points[i][0][0] * (drawing_width / 2 - BORDER);
+    //     var y = canvas_height_ / 2 - points[i][1][0] * (drawing_width / 2 - BORDER);
+    //     figure_context_.fillRect(x, y, 1, 5);
+    //   }
+    // } else { // 'rotary' or 'rotaryinv'
+    //   var sign = lissa.harmonograph_type === 'rotary' ? 1 : -1;
+    //   for (var i = 1; i < points.length; i++) {
+    //     var osc_x = (points[i][0][0] + points[i][1][0]) * 0.5;
+    //     var osc_y = (points[i][0][1] + sign * points[i][1][1]) * 0.5;
+    //     var x = canvas_width_ / 2 + osc_x * (drawing_width / 2 - BORDER);
+    //     var y = canvas_height_ / 2 - osc_y * (drawing_width / 2 - BORDER);
+    //     figure_context_.fillRect(x, y, 1, 5);
+    //   }
+    // }
 
     // Clear points we drew.
     points = [];
@@ -267,7 +279,7 @@ lissa.figure = function() {
   };
 }();
 
-lissa.process = function(buffer) {
+lissa.process = function (buffer) {
   var output_left = buffer.outputBuffer.getChannelData(0);
   var output_right = buffer.outputBuffer.getChannelData(1);
   var size = output_left.length;

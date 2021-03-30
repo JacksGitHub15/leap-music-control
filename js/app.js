@@ -1,3 +1,9 @@
+/*
+  Reference:
+  Matt Tytel, lissa, (2013), GitHub repository, https://github.com/mtytel/lissa
+  This was used for guidance and inspiration
+ */
+
 lissa.BUFFER_SIZE = 1024;
 
 lissa.init = function($) {

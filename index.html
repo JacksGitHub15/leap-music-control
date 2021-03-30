@@ -4,26 +4,15 @@
   <title>
     Leap Motion Control
   </title>
-  <script type="text/javascript">
 
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-38450508-1']);
-    _gaq.push(['_trackPageview']);
-
-    (function () {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
+  <script src="https://js.leapmotion.com/leap-1.1.0.min.js"></script>
   <script src="https://code.jquery.com/jquery-1.8.1.min.js"
     integrity="sha256-/BhPlt0YeU4gTEEHWgCSO+fo5Wh0QjHXTy/fiSH3jSk=" crossorigin="anonymous"></script>
   <script src="js/jquery.knob.js"></script>
   <script src="js/jquery.minicolors.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore.js">
   </script>
-  <script src="js/lissa.js"></script>
+  <script src="js/visuals.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/controls.js"></script>
   <script src="js/app.js"></script>
@@ -32,49 +21,115 @@
 </head>
 
 <body>
-  <div class="container">
+  <div id="content" class="container">
     <div class="controls">
-      <div class="buttons">
-        <button class="simple-button randomize">
-          Randomize
-        </button>
-        <button class="simple-button play">
-          Play Song!
-        </button>
-        <button class="simple-button controls-toggle">
-          Controls
-        </button>
-      </div>
-      <div class="knobs">
-        <div class="buttons harmonograph-type">
-          <button class="simple-button" data-type="lateral">
-            Lateral
-          </button>
-          <button class="simple-button" data-type="rotary">
-            Rotary
-          </button>
-          <button class="simple-button" data-type="rotaryinv">
-            Rotary Inv.
-          </button>
+      <aside class="right-col">
+
+        <div class="leap-motion-panel">
+          <p id="instructions">Instructions: Knobs on the left side of the screen are painting the Lissajous figure
+            before you. Use the checkboxes in the below control panel to activate the Leap Motion control and move your
+            hand vertically to manipulate the desired effect</p>
+
+          <p>Leap Motion Control Panel</p>
+          <p>Left Oscillator:</p>
+          <div class="knob-label">Multiply</div>
+          <div class="knob-checkbox">
+            <input type="checkbox" id="mul_checkbox" name="check" onclick="onlyOne(this)">
+            <label for="mul_checkbox" class="checkbox-label">
+          </div>
+
+          <div class="knob-label">Divide</div>
+          <div class="knob-checkbox">
+            <input type="checkbox" id="divi_checkbox" name="check" onclick="onlyOne(this)">
+            <label for="divi_checkbox" class="checkbox-label">
+          </div>
+
+          <div class="knob-label">Detune</div>
+          <div class="knob-checkbox">
+            <input type="checkbox" id="detu_checkbox" name="check" onclick="onlyOne(this)">
+            <label for="detu_checkbox" class="checkbox-label">
+          </div>
+
+          <div class="knob-label">Phase</div>
+          <div class="knob-checkbox">
+            <input type="checkbox" id="phase_checkbox" name="check" onclick="onlyOne(this)">
+            <label for="phase_checkbox" class="checkbox-label">
+          </div>
+
+          <div class="knob-label">Sin</div>
+          <div class="knob-checkbox">
+            <input type="checkbox" id="sin_checkbox" name="check" onclick="onlyOne(this)">
+            <label for="sin_checkbox" class="checkbox-label">
+          </div>
+
+          <div class="knob-label">Tri</div>
+          <div class="knob-checkbox">
+            <input type="checkbox" id="tri_checkbox" name="check" onclick="onlyOne(this)">
+            <label for="tri_checkbox" class="checkbox-label">
+          </div>
+
+          <p>Right Oscillator:</p>
+          <div class="knob-label">Multiply</div>
+          <div class="knob-checkbox">
+            <input type="checkbox" id="mul_checkbox" name="check" onclick="onlyOne(this)">
+            <label for="mul_checkbox" class="checkbox-label">
+          </div>
+
+          <div class="knob-label">Divide</div>
+          <div class="knob-checkbox">
+            <input type="checkbox" id="divi_checkbox" name="check" onclick="onlyOne(this)">
+            <label for="divi_checkbox" class="checkbox-label">
+          </div>
+
+          <div class="knob-label">Detune</div>
+          <div class="knob-checkbox">
+            <input type="checkbox" id="detu_checkbox" name="check" onclick="onlyOne(this)">
+            <label for="detu_checkbox" class="checkbox-label">
+          </div>
+
+          <div class="knob-label">Phase</div>
+          <div class="knob-checkbox">
+            <input type="checkbox" id="phase_checkbox" name="check" onclick="onlyOne(this)">
+            <label for="phase_checkbox" class="checkbox-label">
+          </div>
+
+          <div class="knob-label">Sin</div>
+          <div class="knob-checkbox">
+            <input type="checkbox" id="sin_checkbox" name="check" onclick="onlyOne(this)">
+            <label for="sin_checkbox" class="checkbox-label">
+          </div>
+
+          <div class="knob-label">Tri</div>
+          <div class="knob-checkbox">
+            <input type="checkbox" id="tri_checkbox" name="check" onclick="onlyOne(this)">
+            <label for="tri_checkbox" class="checkbox-label">
+          </div>
+
         </div>
-        <div id="left-oscillator">
-        </div>
-        <div id="right-oscillator">
-        </div>
+      </aside>
+
+      <aside class="left-col">
+        <div id="left-oscillator"></div>
+        <div id="right-oscillator"></div>
+
         <div class="other-controls">
           <div id="base_freq">
           </div>
         </div>
-        <div>
-          <input class="minicolors no-textfield" type="text" value="#ffff00">
-        </div>
-      </div>
-    </div>
-    <canvas id="lissajous"></canvas>
-  </div>
-  </div>
 
-  <script type="underscore/template" id="knob">
+        <button class="simple-button randomize">
+          Randomize
+        </button>
+
+        <input class="minicolors no-textfield" type="text" value="#ffff00">
+      </aside>
+
+      <main>
+        <canvas id="lissajous"></canvas>
+      </main>
+    </div>
+
+    <script type="underscore/template" id="knob">
       <input
         class="knob"
         id="<%=id%>"
@@ -90,7 +145,7 @@
       <p><%=label%></p>
     </script>
 
-  <script type="underscore/template" id="oscillator">
+    <script type="underscore/template" id="oscillator">
       <div class="oscillator">
         <div class="oscillator-title">
           <%=title%>
@@ -103,6 +158,7 @@
         </div>
       </div>
     </script>
+  </div>
 </body>
 
 </html>
